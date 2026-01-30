@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package event;
+
+option go_package = "./event";
+
+import "google/protobuf/timestamp.proto";
+
+// EventService - booking-service only needs GetEvent and UpdateAvailableTickets
+service EventService {
+  rpc GetEvent(GetEventRequest) returns (GetEventResponse);
+  rpc UpdateAvailableTickets(UpdateTicketsRequest) returns (UpdateTicketsResponse);
+}
+
+message Event {
+  string id = 1;
+  string name = 2;
+  google.protobuf.Timestamp start_time = 3;
+  int32 total_seats = 4;
+  int32 available_seats = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message GetEventRequest {
+  string event_id = 1;
+}
+
+message GetEventResponse {
+  Event event = 1;
+}
+
+message UpdateTicketsRequest {
+  string event_id = 1;
+  int32 quantity = 2;
+}
+
+message UpdateTicketsResponse {
+  int32 available_seats = 1;
+  bool success = 2;
+}
