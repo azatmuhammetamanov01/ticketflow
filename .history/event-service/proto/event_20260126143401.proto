@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package event;
+
+option go_package = "./proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service EventService {
+  rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse){
+    option (google.api.http) = {
+      post: "/v1/event"
+      body:"*"
+    };
+  }
+  
+  rpc GetEvent(GetEventRequest) returns (GetEventResponse){
+    option (google.api.http) = {
+      get: "/v1/events/{event_id}"
+    };
+  }
+
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse){
+    option (google.api.http) = {
+      get: "/v1/list/events"
+    };
+  }
+
+  rpc UpdateAvailableTickets(UpdateTicketsRequest) returns (UpdateTicketsResponse){
+    option (google.api.http) = {
+      put: "/v1/event/{event_id}"
+      body:"*"
+    };
+  }
+}
+
+message Event {
+  string id = 1;
+  string name = 2;
+  google.protobuf.Timestamp start_time = 3;
+  int32 total_seats = 4;
+  int32 available_seats = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message CreateEventRequest {
+  string name = 1;
+  google.protobuf.Timestamp start_time = 2;
+  int32 total_seats = 3;
+}
+
+message CreateEventResponse {
+  string event_id = 1;
+}
+
+message GetEventRequest {
+  string event_id = 1;
+}
+
+message GetEventResponse {
+  Event event = 1;
+}
+
+message ListEventsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListEventsResponse {
+  repeated Event events = 1;
+  int32 total_count = 2;
+}
+
+message UpdateTicketsRequest {
+  string event_id = 1;
+  int32 quantity = 2;
+}
+
+message UpdateTicketsResponse {
+  int32 available_seats = 1;
+  bool success = 2;
+}
+
