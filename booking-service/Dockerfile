@@ -8,7 +8,7 @@ RUN go mod download
 
 #Build
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o booking-service ./server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o booking-service ./cmd/server/main.go
 
 #Run stage
 FROM alpine:3.19

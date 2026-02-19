@@ -2,13 +2,14 @@
 export $(shell sed 's/=.*//' .env)
 
 APP_NAME := event-service
-CMD_DIR := cmd/event-service
+CMD_DIR := ./server
 PROTO_DIR := proto
-GOOGLEAPIS_DIR := googleapis
+GOOGLEAPIS_DIR := vendor.protogen/googleapis
 MIGRATIONS_DIR := migrations
-
+BIN_DIR := bin
 DB_URL := postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
 LOCAL_BIN := $(shell go env GOPATH)/bin
+
 install-deps:
 	@mkdir -p $(LOCAL_BIN)
 	@GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
@@ -23,9 +24,9 @@ vendor-proto:
 		mv vendor.protogen/googleapis/google vendor.protogen/; \
 		rm -rf vendor.protogen/googleapis; \
 	fi
-
+.PHONY: proto
 proto:
-	protoc -I $(PROTO_DIR) -I $(GOOGLEAPIS_DIR) -I vendor.protogen/google \
+	protoc -I proto -I vendor.protogen \
 		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		--grpc-gateway_out=$(PROTO_DIR) --grpc-gateway_opt=paths=source_relative \
@@ -33,7 +34,10 @@ proto:
 		$(PROTO_DIR)/*.proto
 
 build:
-	go build -o bin/$(APP_NAME) ./$(CMD_DIR)
+	@echo "Building $(APP_NAME)..."
+	@mkdir -p $(BIN_DIR)
+	go build -o $(BIN_DIR)/$(APP_NAME) ./server/main.go
+
 
 run:
 	go run ./$(CMD_DIR)

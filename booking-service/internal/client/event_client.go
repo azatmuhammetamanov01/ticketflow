@@ -86,7 +86,6 @@ func (c *eventClient) ReserveTickets(ctx context.Context, eventID string, quanti
 }
 
 func (c *eventClient) ReleaseTickets(ctx context.Context, eventID string, quantity int32) error {
-	// Negative quantity adds seats back (available_seats - (-quantity) = available_seats + quantity)
 	_, err := c.client.UpdateAvailableTickets(ctx, &eventpb.UpdateTicketsRequest{
 		EventId:  eventID,
 		Quantity: -quantity,

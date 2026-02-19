@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package event;
-
-option go_package = "./proto";
-
-import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";

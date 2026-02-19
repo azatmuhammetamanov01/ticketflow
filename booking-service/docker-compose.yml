@@ -29,6 +29,13 @@ services:
       DB_SSLMODE: disable  
     depends_on:
       postgres:
-        condition: service_healthy  
+        condition: service_healthy
+    networks:
+      - microservices-network  
+
+networks:
+  microservices-network:
+    external: true 
+
 volumes:
   postgres_data:        

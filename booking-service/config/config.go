@@ -17,12 +17,14 @@ type DatabaseConfig struct {
 }
 
 type ServerConfig struct {
-	Port string
-	Host string
+	HTTP_Port string
+	GRPC_Port string
+	Host      string
 }
 
 type AppConfig struct {
-	Environment string
+	Environment      string
+	EventServiceAddr string
 }
 
 type Config struct {
@@ -46,11 +48,13 @@ func Load() (*Config, error) {
 			SSLMode:  getEnv("DB_SSLMODE", "disable"),
 		},
 		Server: ServerConfig{
-			Port: getEnv("SERVER_PORT", "8080"),
-			Host: getEnv("SERVER_HOST", "0.0.0.0"),
+			HTTP_Port: getEnv("HTTP_PORT", "8081"),
+			GRPC_Port: getEnv("GRPC_PORT", "9091"),
+			Host:      getEnv("SERVER_HOST", "0.0.0.0"),
 		},
 		App: AppConfig{
-			Environment: getEnv("APP_ENV", "development"),
+			Environment:      getEnv("APP_ENV", "development"),
+			EventServiceAddr: getEnv("EVENT_SERVICE_ADDR", "localhost:9091"),
 		},
 	}
 

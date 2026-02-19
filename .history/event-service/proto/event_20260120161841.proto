@@ -1,5 +1,0 @@
-syntax = "proto3";
-
-package event;
-
-option go_package = "./proto"
