@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: test_db_2
+      POSTGRES_DB: event_db
     ports:
       - "5434:5432"
     volumes:
@@ -15,10 +15,12 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - microservices-network
+      - default
 
   event-service:
-    build: .
+    build:
+      context: ..
+      dockerfile: event-service/Dockerfile
     ports:
       - "9092:9091"
       - "8082:8080"
@@ -27,17 +29,20 @@ services:
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: 1234
-      DB_NAME: test_db_2
+      DB_NAME: event_db
       DB_SSLMODE: disable
     depends_on:
       postgres:
         condition: service_healthy
     networks:
+      - default
       - microservices-network
 
 networks:
   microservices-network:
-    external: true  
+    external: true
+  default:
+    driver: bridge
 
 volumes:
   postgres_data:

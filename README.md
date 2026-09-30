@@ -4,7 +4,7 @@
 
 ## 📋 Overview
 
-TicketFlow is a backend system that handles online ticket bookings for events. It is built using a microservice architecture where services communicate via gRPC.
+TicketFlow is a backend system that handles online ticket bookings for events. It uses a microservice architecture where the Booking Service calls the Event Service over gRPC, and both services expose REST APIs through gRPC-Gateway.
 
 ## 🏗️ Architecture
 
@@ -39,13 +39,16 @@ User → API Gateway → Booking Service ←→ Event Service
 - Handles booking creation and management
 - Communicates with Event Service via gRPC to check and reserve seats
 - Exposes REST API via gRPC-Gateway
-- **Ports:** `9091` (gRPC), `8081` (HTTP)
+- **Local defaults:** `9091` (gRPC), `8081` (HTTP)
+- **Docker Compose ports:** `9091` (gRPC), `8081` (HTTP)
 - **Database:** `test_db_1`
 
 ### Event Service
 - Manages events and seat availability
 - Handles seat reservation and decrement logic
-- **Ports:** `9092` (gRPC), `8082` (HTTP)
+- **Local defaults:** `9091` (gRPC), `8080` (HTTP)
+
+- **Docker Compose ports:** `9092` (gRPC), `8082` (HTTP)
 - **Database:** `test_db_2`
 
 ## 🚀 Getting Started
@@ -63,28 +66,30 @@ User → API Gateway → Booking Service ←→ Event Service
 docker network create microservices-network
 ```
 
-**2. Start Booking Service:**
-```bash
-cd booking-service
-docker-compose up --build
-```
-
-**3. Start Event Service:**
+**2. Start Event Service:**
 ```bash
 cd event-service
-docker-compose up --build
+docker compose up --build
 ```
+
+**3. Start Booking Service:**
+```bash
+cd booking-service
+docker compose up --build
+```
+
+If you run Booking Service in Docker, set `EVENT_SERVICE_ADDR=event-service:9091` so it can reach the Event Service on the shared Docker network.
 
 ### Run Locally
 
 ```bash
 # Booking Service
 cd booking-service
-go run cmd/main.go
+go run ./cmd/server
 
 # Event Service
 cd event-service
-go run cmd/main.go
+go run ./cmd/server
 ```
 
 ## ⚙️ Environment Variables
@@ -99,10 +104,11 @@ Both services use the following environment variables (via `.env` file):
 | `DB_PASSWORD` | Database password | `1234` |
 | `DB_NAME` | Database name | `test_db_1` |
 | `DB_SSLMODE` | SSL mode | `disable` |
-| `HTTP_PORT` | HTTP server port | `8080` |
+| `HTTP_PORT` | HTTP server port | `8081` for booking, `8080` for event |
 | `GRPC_PORT` | gRPC server port | `9091` |
 | `SERVER_HOST` | Server host | `0.0.0.0` |
-| `EVENT_SERVICE_ADDR` | Event service gRPC address | `event-service-event-service-1:9091` |
+| `APP_ENV` | Application environment | `development` |
+| `EVENT_SERVICE_ADDR` | Event service gRPC address | `localhost:9091` locally, `event-service:9091` in Docker |
 
 ## 📡 API Endpoints
 
@@ -113,31 +119,48 @@ Both services use the following environment variables (via `.env` file):
 | `POST` | `/bookings` | Create a new booking |
 | `GET` | `/healthz` | Health check |
 
-### Event Service (`localhost:8082`)
+### Event Service (`localhost:8080`)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/events` | List all events |
 | `GET` | `/healthz` | Health check |
 
+- 🧪 **[Comprehensive Testing Guide](docs/testing.md):** Complete guide on Unit, Integration, E2E, and Stress/Concurrency testing.
+- 📡 **[API Testing Guide](docs/api_testing.md):** Guide with `cURL` and `grpcurl` commands for testing all endpoints.
+- 🚀 **[Future Roadmap](ROADMAP.md):** Scalability roadmap covering Redis Distributed Locks, Kafka, OpenTelemetry, GraphQL, and Kubernetes.
+
 ## 🗂️ Project Structure
 
 ```
 ticketflow/
+├── api/
+│   └── proto/
+│       ├── booking/v1/booking.proto
+│       └── event/v1/event.proto
+├── docs/
+│   ├── api_testing.md
+│   └── testing.md
+├── gen/
+│   ├── go/
+│   │   ├── booking/v1/
+│   │   └── event/v1/
+│   └── go.mod
 ├── booking-service/
-│   ├── cmd/
+│   ├── cmd/server/
 │   ├── internal/
-│   ├── proto/
 │   ├── Dockerfile
 │   ├── docker-compose.yml
 │   └── .env
 ├── event-service/
-│   ├── cmd/
+│   ├── cmd/server/
 │   ├── internal/
-│   ├── proto/
 │   ├── Dockerfile
 │   ├── docker-compose.yml
 │   └── .env
+├── go.work
+├── Makefile
+├── ROADMAP.md
 └── README.md
 ```
 
@@ -145,4 +168,5 @@ ticketflow/
 
 - `.env` files are excluded from version control
 - Services communicate via a shared Docker network (`microservices-network`)
+- Booking Service should point `EVENT_SERVICE_ADDR` to `event-service:9091` when running through Docker Compose
 - Each service has its own isolated PostgreSQL database

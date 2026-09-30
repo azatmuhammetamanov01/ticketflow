@@ -12,7 +12,6 @@ func main() {
 	if err != nil {
 		panic("failed to load config: " + err.Error())
 	}
-
 	if err := logger.Init(cfg.App.Environment); err != nil {
 		panic("failed to init logger: " + err.Error())
 	}

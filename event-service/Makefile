@@ -2,7 +2,7 @@
 export $(shell sed 's/=.*//' .env)
 
 APP_NAME := event-service
-CMD_DIR := ./server
+CMD_DIR := ./cmd/server
 PROTO_DIR := proto
 GOOGLEAPIS_DIR := vendor.protogen/googleapis
 MIGRATIONS_DIR := migrations
@@ -15,6 +15,7 @@ install-deps:
 	@GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 	@GOBIN=$(LOCAL_BIN) go install -mod=mod google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	@GOBIN=$(LOCAL_BIN) go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	@GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
 
 vendor-proto:
 	@if [ ! -d vendor.protogen/google/api ]; then \
@@ -26,17 +27,16 @@ vendor-proto:
 	fi
 .PHONY: proto
 proto:
-	protoc -I proto -I vendor.protogen \
-		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
-		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
-		--grpc-gateway_out=$(PROTO_DIR) --grpc-gateway_opt=paths=source_relative \
-		--openapiv2_out=$(PROTO_DIR) \
-		$(PROTO_DIR)/*.proto
+	make -C .. proto
+
+.PHONY: test
+test:
+	go test ./...
 
 build:
 	@echo "Building $(APP_NAME)..."
 	@mkdir -p $(BIN_DIR)
-	go build -o $(BIN_DIR)/$(APP_NAME) ./server/main.go
+	go build -o $(BIN_DIR)/$(APP_NAME) ./cmd/server/main.go
 
 
 run:

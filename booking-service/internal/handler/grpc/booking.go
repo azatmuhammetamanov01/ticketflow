@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/internal/domain"
-	pb "github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/proto"
+	pb "github.com/azatmuhammetamanov01/online-ticket-booking/gen/go/booking/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"

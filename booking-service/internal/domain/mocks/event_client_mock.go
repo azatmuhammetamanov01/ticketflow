@@ -3,7 +3,7 @@ package mocks
 import (
 	"context"
 
-	eventpb "github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/event"
+	eventpb "github.com/azatmuhammetamanov01/online-ticket-booking/gen/go/event/v1"
 	"github.com/stretchr/testify/mock"
 )
 

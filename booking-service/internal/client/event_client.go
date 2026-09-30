@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	eventpb "github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/event"
+	eventpb "github.com/azatmuhammetamanov01/online-ticket-booking/gen/go/event/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"

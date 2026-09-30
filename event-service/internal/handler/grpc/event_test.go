@@ -7,7 +7,7 @@ import (
 
 	"github.com/azatmuhammetamanov01/online-ticket-booking/event-service/internal/domain"
 	"github.com/azatmuhammetamanov01/online-ticket-booking/event-service/internal/domain/mocks"
-	pb "github.com/azatmuhammetamanov01/online-ticket-booking/event-service/proto"
+	pb "github.com/azatmuhammetamanov01/online-ticket-booking/gen/go/event/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc/codes"

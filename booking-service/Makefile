@@ -131,12 +131,7 @@ vendor-proto:
 
 .PHONY: proto
 proto:
-	protoc -I proto -I vendor.protogen \
-		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
-		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
-		--grpc-gateway_out=$(PROTO_DIR) --grpc-gateway_opt=paths=source_relative \
-		--openapiv2_out=$(PROTO_DIR) \
-		$(PROTO_DIR)/*.proto
+	make -C .. proto
 
 # ──────────────────────────────────────────────
 # Docker

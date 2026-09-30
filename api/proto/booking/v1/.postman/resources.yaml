@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: b34ba7de-8e67-4f1d-8de7-de83a7d8fee8
+
+localResources:
+  specs:
+    - ../booking.proto

@@ -49,7 +49,7 @@ func Load() (*Config, error) {
 		Server: ServerConfig{
 			HTTP_Port: getEnv("HTTP_PORT", "8080"),
 			GRPC_Port: getEnv("GRPC_PORT", "9091"),
-			Host:      getEnv("HTTP_HOST", "0.0.0.0"),
+			Host:      getEnv("SERVER_HOST", getEnv("HTTP_HOST", "0.0.0.0")),
 		},
 		App: AppConfig{
 			Environment: getEnv("APP_ENV", "development"),

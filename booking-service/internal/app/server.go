@@ -11,12 +11,15 @@ import (
 	"syscall"
 	"time"
 
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
+
 	"github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/internal/client"
 	grpcHandler "github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/internal/handler/grpc"
 	"github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/internal/logger"
 	"github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/internal/repository/postgres"
 	"github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/internal/usecase"
-	pb "github.com/azatmuhammetamanov01/online-ticket-booking/booking-service/proto"
+	pb "github.com/azatmuhammetamanov01/online-ticket-booking/gen/go/booking/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/zap"
 	grpclib "google.golang.org/grpc"
@@ -55,7 +58,7 @@ func (a *App) initServers() error {
 	httpAddr := fmt.Sprintf("%s:%s", a.cfg.Server.Host, a.cfg.Server.HTTP_Port)
 	a.httpServer = &http.Server{
 		Addr:    httpAddr,
-		Handler: httpMux,
+		Handler: h2c.NewHandler(httpMux, &http2.Server{}),
 	}
 
 	return nil
